@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>VibeTrack UWB</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>VibeTrack UWB uses Bluetooth to connect to the ESP32 UWB accessory and receive local tracking telemetry.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>VibeTrack UWB uses Bluetooth to communicate with the ESP32 UWB accessory.</string>
+</dict>
+</plist>
