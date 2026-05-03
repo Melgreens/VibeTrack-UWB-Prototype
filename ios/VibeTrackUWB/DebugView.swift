@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 struct DebugView: View {
@@ -57,9 +58,9 @@ struct DebugView: View {
             debugRow("uwbDetected", telemetry.map { String($0.uwbDetected) } ?? "-")
             debugRow("deviceId", telemetry?.deviceId ?? "-")
             debugRow("mode", telemetry?.mode ?? "-")
-            debugRow("distanceMeters", telemetry.map { String(format: "%.2f", $0.distanceMeters) } ?? "-")
-            debugRow("distanceFeet", telemetry.map { String(format: "%.2f", $0.distanceFeet) } ?? "-")
-            debugRow("bearingDegrees", telemetry.map { String(format: "%.1f", $0.bearingDegrees) } ?? "-")
+            debugRow("distanceMeters", formatted(telemetry?.distanceMeters, precision: 2))
+            debugRow("distanceFeet", formatted(telemetry?.distanceFeet, precision: 2))
+            debugRow("bearingDegrees", formatted(telemetry?.bearingDegrees, precision: 1))
             debugRow("signalQuality", telemetry?.signalQuality ?? "-")
             debugRow("lastUpdateMs", telemetry.map { String($0.lastUpdateMs) } ?? "-")
             debugRow("error", telemetry?.error ?? "null")
@@ -100,6 +101,14 @@ struct DebugView: View {
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+
+    private func formatted(_ value: Double?, precision: Int) -> String {
+        guard let value else {
+            return "null"
+        }
+
+        return String(format: "%.\(precision)f", value)
     }
 
     private var lastPacketText: String {

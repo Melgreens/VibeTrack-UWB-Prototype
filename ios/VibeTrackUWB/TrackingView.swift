@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 struct TrackingView: View {
@@ -25,13 +26,13 @@ struct TrackingView: View {
 
     private var distancePanel: some View {
         VStack(spacing: 8) {
-            Text("\(telemetry.distanceFeet, specifier: "%.2f") ft")
+            Text(distanceFeetText)
                 .font(.system(size: 58, weight: .bold, design: .rounded))
                 .monospacedDigit()
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
 
-            Text("\(telemetry.distanceMeters, specifier: "%.2f") meters")
+            Text(distanceMetersText)
                 .font(.title3.weight(.medium))
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
@@ -40,7 +41,7 @@ struct TrackingView: View {
         .frame(maxWidth: .infinity)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .animation(.spring(response: 0.35, dampingFraction: 0.82), value: telemetry.distanceFeet)
+        .animation(.spring(response: 0.35, dampingFraction: 0.82), value: telemetry.distanceFeet ?? -1)
     }
 
     private var directionPanel: some View {
@@ -62,12 +63,13 @@ struct TrackingView: View {
                     .font(.system(size: 86, weight: .semibold))
                     .foregroundStyle(.cyan)
                     .shadow(color: .cyan.opacity(0.4), radius: 12)
-                    .rotationEffect(.degrees(telemetry.bearingDegrees))
-                    .animation(.spring(response: 0.45, dampingFraction: 0.76), value: telemetry.bearingDegrees)
+                    .rotationEffect(.degrees(telemetry.bearingDegrees ?? 0))
+                    .opacity(telemetry.bearingDegrees == nil ? 0.45 : 1.0)
+                    .animation(.spring(response: 0.45, dampingFraction: 0.76), value: telemetry.bearingDegrees ?? 0)
             }
             .frame(maxWidth: .infinity)
 
-            Text("\(telemetry.bearingDegrees, specifier: "%.0f") degrees")
+            Text(bearingText)
                 .font(.title3.weight(.semibold))
                 .monospacedDigit()
         }
@@ -126,16 +128,44 @@ struct TrackingView: View {
         }
     }
 
+    private var distanceFeetText: String {
+        guard let distanceFeet = telemetry.distanceFeet else {
+            return "-- ft"
+        }
+
+        return String(format: "%.2f ft", distanceFeet)
+    }
+
+    private var distanceMetersText: String {
+        guard let distanceMeters = telemetry.distanceMeters else {
+            return "-- meters"
+        }
+
+        return String(format: "%.2f meters", distanceMeters)
+    }
+
+    private var bearingText: String {
+        guard let bearingDegrees = telemetry.bearingDegrees else {
+            return "No iPhone UWB bearing"
+        }
+
+        return String(format: "%.0f degrees", bearingDegrees)
+    }
+
     private var statusMessage: String {
+        if telemetry.mode == "uwb_error" {
+            if let error = telemetry.error, !error.isEmpty {
+                return error
+            }
+
+            return "UWB ranging error"
+        }
+
         if !telemetry.uwbDetected {
             return "DWM3000 not detected"
         }
 
-        if telemetry.signalQuality.lowercased().contains("simulated") {
-            return "Using simulated UWB telemetry"
-        }
-
-        if telemetry.distanceFeet > 0, telemetry.distanceFeet < 2 {
+        if let distanceFeet = telemetry.distanceFeet, distanceFeet > 0, distanceFeet < 2 {
             return "Very close"
         }
 
@@ -151,15 +181,11 @@ struct TrackingView: View {
     }
 
     private var statusIcon: String {
-        if !telemetry.uwbDetected {
+        if !telemetry.uwbDetected || telemetry.mode == "uwb_error" {
             return "exclamationmark.triangle"
         }
 
-        if telemetry.signalQuality.lowercased().contains("simulated") {
-            return "sparkles"
-        }
-
-        if telemetry.distanceFeet > 0, telemetry.distanceFeet < 2 {
+        if let distanceFeet = telemetry.distanceFeet, distanceFeet > 0, distanceFeet < 2 {
             return "scope"
         }
 
@@ -167,15 +193,11 @@ struct TrackingView: View {
     }
 
     private var statusColor: Color {
-        if !telemetry.uwbDetected {
+        if !telemetry.uwbDetected || telemetry.mode == "uwb_error" {
             return .red
         }
 
-        if telemetry.signalQuality.lowercased().contains("simulated") {
-            return .cyan
-        }
-
-        if telemetry.distanceFeet > 0, telemetry.distanceFeet < 2 {
+        if let distanceFeet = telemetry.distanceFeet, distanceFeet > 0, distanceFeet < 2 {
             return .green
         }
 
