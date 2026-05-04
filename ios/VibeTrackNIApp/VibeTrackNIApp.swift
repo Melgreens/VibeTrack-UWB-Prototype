@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct VibeTrackUWBApp: App {
+struct VibeTrackNIApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
