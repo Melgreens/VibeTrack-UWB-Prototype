@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>VibeTrack NI</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>VibeTrack NI uses Bluetooth to connect to the UWB accessory and exchange Nearby Interaction configuration data.</string>
+    <key>NSNearbyInteractionUsageDescription</key>
+    <string>VibeTrack NI uses Nearby Interaction to show the distance and direction to your local UWB accessory.</string>
+</dict>
+</plist>
